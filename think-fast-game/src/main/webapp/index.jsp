@@ -10,9 +10,9 @@
     <body>
         <h1>Think Fast Game</h1>
         <div id="participant">
-            <h2>Insert your name and click start to begin:</h2>
+            <h2>Insira seu nome e clique no botão start para iniciar:</h2>
             <input type="text" name="participant" />
-            <input type="button" value="start" data-bind="click: play"/>
+            <input type="button" value="start" data-bind="click: play" />
         </div>
         <br/>
         <div id="survey">
@@ -26,19 +26,24 @@
             <span id="message"></span>
         </div>
         <script>
-			var ThinkFast = function() {
-				var self = this;
-				self.participant = ko.observable();
-				self.question = ko.observable();
-				self.answers = ko.observableArray([]);
+            var ThinkFast = function() {
+                var self = this;
+                self.participant = ko.observable();
+                self.question = ko.observable();
+                self.answers = ko.observableArray([]);
 
 			
-				self.play = function() {
-					self.question("Qual a capital do Brasil?"); //question guarda referencia da função observable
-					self.answers.push("Servia"); //answer é um array
-				}
-			}
-			ko.applyBindings(new ThinkFast());
-		</script>
+                self.play = function() {
+                    $.getJSON("/thinkfast", {action: "play", name: self.participant() }, function(data){
+                        self.question(data.description);
+                        self.answers.removeAll();
+                        $.map(data.answers, function(answer){
+                            self.answers.push(answer);
+                        });
+                    });
+                }
+            }
+            ko.applyBindings(new ThinkFast());
+        </script>
     </body>
 </html>

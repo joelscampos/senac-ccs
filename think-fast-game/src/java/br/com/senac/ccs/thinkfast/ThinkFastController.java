@@ -1,32 +1,50 @@
 package br.com.senac.ccs.thinkfast;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.Arrays;
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
 
 @WebServlet(urlPatterns = { "/thinkfast" },
-            asyncSupported = true)
+            asyncSupported = true, loadOnStartup=1)
 public class ThinkFastController extends HttpServlet {
+    
+    private ThinkFastGame game;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        game = new ThinkFastGame();
+        game.init();
+    }
+    
+    
     
     @Override
     protected void doGet( HttpServletRequest req,
                           HttpServletResponse resp )
             throws ServletException, IOException {
-        super.doGet( req, resp );
-    }
-    
-    public class Question {
-        private String description;
-        private java.util.List<String> answers;
-        private String correctAnswer;
         
-        public Question( String description,
-                         java.util.List<String> answers,
-                         String correctAnswer ) {
-            this.description = description;
-            this.answers = answers;
-            this.correctAnswer = correctAnswer;
+        String action = req.getParameter( "action" );
+        String id = req.getSession().getId();
+        if ( "play".equals( action )) {
+            String name = req.getParameter( "name" );
+            AsyncContext async = req.startAsync();
+            game.play( id, name, async );
         }
+        else if ( "answer".equals( action )) {
+            String answer = req.getParameter( "answer" );
+            game.answer( id, answer );
+
+        }
+        else if ( "bind".equals( action )) {
+            String answer = req.getParameter( "answer" );
+            AsyncContext async = req.startAsync();
+            game.bind( id, async );            
+        }
+        
     }
+
 }
