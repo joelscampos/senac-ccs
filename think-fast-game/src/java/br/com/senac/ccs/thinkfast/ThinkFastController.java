@@ -8,16 +8,15 @@ import javax.servlet.http.*;
 
 
 @WebServlet(urlPatterns = { "/thinkfast" },
-            asyncSupported = true, loadOnStartup=1)
+            asyncSupported = true, loadOnStartup = 1)
 public class ThinkFastController extends HttpServlet {
     
     private ThinkFastGame game;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        game = new ThinkFastGame();
-        game.init();
+        this.game = new ThinkFastGame();
+        this.game.init();
     }
     
     

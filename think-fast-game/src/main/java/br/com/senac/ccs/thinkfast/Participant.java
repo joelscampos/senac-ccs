@@ -1,7 +1,9 @@
 package br.com.senac.ccs.thinkfast;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import javax.servlet.AsyncContext;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 public class Participant {
@@ -46,6 +48,16 @@ public class Participant {
         this.asyncContext = asyncContext;
     }
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+    
     public void notify( Result result ) throws IOException {
+        if ( asyncContext != null ) {
+            HttpServletResponse response = (HttpServletResponse) asyncContext.getResponse();
+            response.setContentType( "application/json" );
+            response.getWriter().write( mapper.writeValueAsString( result ) );
+            response.flushBuffer();
+            asyncContext.complete();
+            asyncContext = null;
+        }
     }
 }

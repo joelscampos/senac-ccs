@@ -28,6 +28,15 @@ public class ThinkFastGame {
         /*criar uma instancia de participantes
          * 
          */
+        lock.lock();
+        try {
+            Participant participant = new Participant( id, name, asyncContext );
+            participants.put( id, participant );
+            participant.notify(new Result( currentQuestion, "Welcome"));            
+        }
+        finally {
+            lock.unlock();
+        }
     }
 
     public void bind( String id, AsyncContext asyncContext ) {
@@ -35,7 +44,30 @@ public class ThinkFastGame {
     }
 
     public void answer( String id, String answer ) throws IOException {
-        /*avisa todo mundo quando respondeu certo, ou avisa o cara quando ele responder errado*/
+        lock.lock();
+        try {
+            
+            if ( this.currentQuestion.getAnswer().equals( answer )) {
+                Question question = currentQuestion;
+                Collections.shuffle( questions );
+                currentQuestion = questions.get( 0 );
+                questions.add( question );
+                Participant winner = participants.remove( id );
+                winner.notify( new Result( currentQuestion, "Congratulations"));
+                for ( Participant participant : participants.values()) {
+                    participant.notify( new Result( currentQuestion, String.format( "O participante %s respondeu " + 
+                                                                                    "mais rapido, tente novamente", winner.getName())));
+                }
+            }
+            else {
+                Participant participant = participants.get( id );
+                participant.notify( new Result( "Nope!! :("));
+            }
+        }
+        finally {
+            lock.unlock();
+        }
+                /*avisa todo mundo quando respondeu certo, ou avisa o cara quando ele responder errado*/
     }
 
     public void init() {

@@ -8,7 +8,13 @@ public class Question {
     private List<String> answers;
     private String answer;
 
+    public String getAnswer() {
+        return answer;
+    }
+        
+
     public Question() {
+        
     }
 
     public Question( String description, List<String> answers, String answer ) {
