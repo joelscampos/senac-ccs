@@ -89,7 +89,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("                        self.parseResult(data);\n");
       out.write("                    }).complete(function() { /*complete equivale a um finally*/\n");
       out.write("                        self.bind();\n");
-      out.write("                    }).onerror(abort);                    \n");
+      out.write("                    });                    \n");
       out.write("                }\n");
       out.write("                self.answer = function(answer) {alert(\"answer: \" + answer);\n");
       out.write("                    $.getJSON(\"/thinkfast\", {action: \"answer\", answer: answer }, function(data){\n");
@@ -107,9 +107,8 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("                            self.answers.push(answer);\n");
       out.write("                        });                        \n");
       out.write("                    }\n");
-      out.write("                    if ( data.message ) {\n");
-      out.write("                        self.message( data.message );\n");
-      out.write("                    }\n");
+      out.write("                    self.message( data.message );\n");
+      out.write("                    \n");
       out.write("                    \n");
       out.write("                }\n");
       out.write("            }\n");

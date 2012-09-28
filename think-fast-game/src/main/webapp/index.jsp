@@ -64,9 +64,8 @@
                             self.answers.push(answer);
                         });                        
                     }
-                    if ( data.message ) {
-                        self.message( data.message );
-                    }
+                    self.message( data.message );
+                    
                     
                 }
             }
