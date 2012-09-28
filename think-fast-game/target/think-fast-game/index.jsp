@@ -11,7 +11,7 @@
         <h1>Think Fast Game</h1>
         <div id="participant">
             <h2>Insira seu nome e clique no botão start para iniciar:</h2>
-            <input type="text" name="participant" />
+            <input type="text" name="participant" data-bind="value: participant" />
             <input type="button" value="start" data-bind="click: play" />
         </div>
         <br/>
@@ -34,10 +34,11 @@
                 self.message = ko.observable();
 
 			
-                self.play = function() {
-                    $.getJSON("/thinkfast", {action: "play", name: self.participant() }, function(data){
+                self.play = function() { 
+                    $.getJSON("thinkfast", {action: "play", name: self.participant() }, function(data){
                         self.parseResult(data);
                         self.bind();
+                        
                     });
                 }
                 self.bind = function() {
@@ -47,20 +48,26 @@
                         self.bind();
                     });                    
                 }
-                self.answer = function(answer) {
+                self.answer = function(answer) {alert("answer: " + answer);
                     $.getJSON("/thinkfast", {action: "answer", answer: answer }, function(data){
                         self.parseResult(data);
+                        
                     });                    
                 }
                 self.parseResult = function( data ) {
+                    
                     if ( data.question ){
+                        
                         self.question(data.question.description);
                         self.answers.removeAll();
-                        $.map(data.answers, function(answer){
+                        $.map(data.question.answers, function(answer){
                             self.answers.push(answer);
                         });                        
                     }
-                    self.message( data.message );
+                    if ( data.message ) {
+                        self.message( data.message );
+                    }
+                    
                 }
             }
             ko.applyBindings(new ThinkFast());

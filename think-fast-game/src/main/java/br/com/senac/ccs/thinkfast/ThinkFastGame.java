@@ -32,7 +32,7 @@ public class ThinkFastGame {
         try {
             Participant participant = new Participant( id, name, asyncContext );
             participants.put( id, participant );
-            participant.notify(new Result( currentQuestion, "Welcome"));            
+            participant.notify(new Result( currentQuestion, "Welcome $s"));            
         }
         finally {
             lock.unlock();
@@ -41,6 +41,8 @@ public class ThinkFastGame {
 
     public void bind( String id, AsyncContext asyncContext ) {
         /* pegar o participante do id e setar*/
+        Participant participant = participants.get(id);
+        participant.setAsyncContext(asyncContext);
     }
 
     public void answer( String id, String answer ) throws IOException {
@@ -73,6 +75,8 @@ public class ThinkFastGame {
     public void init() {
         this.questions.add( new Question( "Qual a capital dos EUA?", Arrays.asList( new String[]{ "Washington DC", "California", "Nevada" } ), "Washington DC" ) );
         this.questions.add( new Question( "Qual a capital da Russia?", Arrays.asList( new String[]{ "Berlin", "Paris", "Moscou" } ), "Moscou" ) );
+        this.questions.add( new Question( "Qual a capital do Brasil?", Arrays.asList( new String[]{ "Berlin", "Brasilia", "Moscou" } ), "Brasilia" ) );
+
         this.currentQuestion = questions.get( 0 );
         
     }

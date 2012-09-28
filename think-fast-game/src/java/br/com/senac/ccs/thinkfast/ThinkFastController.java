@@ -22,7 +22,7 @@ public class ThinkFastController extends HttpServlet {
     
     
     @Override
-    protected void doGet( HttpServletRequest req,
+    public void doGet( HttpServletRequest req,
                           HttpServletResponse resp )
             throws ServletException, IOException {
         
@@ -39,7 +39,6 @@ public class ThinkFastController extends HttpServlet {
 
         }
         else if ( "bind".equals( action )) {
-            String answer = req.getParameter( "answer" );
             AsyncContext async = req.startAsync();
             game.bind( id, async );            
         }
