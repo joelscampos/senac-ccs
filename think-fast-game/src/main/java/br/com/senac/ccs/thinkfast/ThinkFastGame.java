@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -57,9 +58,9 @@ public class ThinkFastGame {
                 Participant winner = participants.get(id);
                 winner.incrementScore();
                 //String placar = objectMapper.writeValueAsString(participants.values());
-                winner.notify(new Result(currentQuestion, String.format("Congratulations! Placar %s" /*, placar*/)));
+                winner.notify(new Result(currentQuestion, String.format("Congratulations!" /*, placar*/)));
                 participants.remove( id );
-                result = new Result(currentQuestion, String.format("Player %s have answered faster, try again. Placar %s", winner.getName()/*, placar*/));
+                result = new Result(currentQuestion, String.format("Player %s have answered faster, try again.", winner.getName()/*, placar*/));
                 for ( Participant participant : participants.values()) {
                     participant.notify(result);
                 }
@@ -76,6 +77,7 @@ public class ThinkFastGame {
                 /*avisa todo mundo quando respondeu certo, ou avisa o cara quando ele responder errado*/
     }
 
+    @PostConstruct
     public void init() {
         this.questions.add( new Question( "Qual a capital dos EUA?", Arrays.asList( new String[]{ "Washington DC", "California", "Nevada" } ), "Washington DC" ) );
         this.questions.add( new Question( "Qual a capital da Russia?", Arrays.asList( new String[]{ "Berlin", "Paris", "Moscou" } ), "Moscou" ) );
