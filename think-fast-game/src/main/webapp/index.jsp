@@ -35,23 +35,22 @@
 
 			
                 self.play = function() { 
-                    $.getJSON("thinkfast", {action: "play", name: self.participant() }, function(data){
+                    $.getJSON("/thinkfast/play", {name: self.participant() }, function(data){
                         self.parseResult(data);
                         self.bind();
                         
                     });
                 }
-                self.bind = function() {
-                    $.getJSON("/thinkfast", {action: "bind" }, function(data){
+                self.bind = function(data) {
+                    $.getJSON("/thinkfast/bind", function(data){
                         self.parseResult(data);
-                    }).complete(function() { /*complete equivale a um finally*/
+                    }).complete(function(data) { /*complete equivale a um finally*/
                         self.bind();
                     });                    
                 }
-                self.answer = function(answer) {alert("answer: " + answer);
-                    $.getJSON("/thinkfast", {action: "answer", answer: answer }, function(data){
-                        self.parseResult(data);
-                        
+                self.answer = function(answer) {
+                    $.getJSON("/thinkfast/answer", {answer: answer }, function(data){
+                        self.parseResult(data);                        
                     });                    
                 }
                 self.parseResult = function( data ) {

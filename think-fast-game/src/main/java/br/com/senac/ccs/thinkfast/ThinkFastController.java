@@ -1,59 +1,40 @@
 package br.com.senac.ccs.thinkfast;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.Arrays;
-import javax.servlet.*;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+
+import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
 
 
 @Controller
-@RequestMapping(value="/thnkfast/*", produces={"application/json"})
+@RequestMapping(value="/thinkfast/*", produces={"application/json"}) //quando o browser requisitar /thinkfast/algumacoisa, o 
 public class ThinkFastController {
     
+    @Autowired
     private ThinkFastGame game;
 
-    @RequestMapping(value="/play", method= ResquestMethod.GET )
+    @RequestMapping(value="play", method = RequestMethod.GET )
     public @ResponseBody Result play(@RequestParam String name, HttpSession session) {
         String id = session.getId();
         DeferredResult<Result> deferredResult = new DeferredResult<Result>();
         Screen screen = new WebScreen( deferredResult );
-        return game.play(id, name, null);
+        return game.play(id, name, screen);
         
+    }
+    @RequestMapping(value="bind", method = RequestMethod.GET )
+    public @ResponseBody DeferredResult<Result> bind( HttpSession session ) {  //o DeferredResult diz para o spring que é para fazer um start async
+        DeferredResult<Result> deferredResult = new DeferredResult<Result>();
+        Screen screen = new WebScreen( deferredResult );
+        game.bind(session.getId(), screen);
+        return deferredResult;
+    }
+    @RequestMapping(value="answer", method = RequestMethod.GET )
+    public @ResponseBody Result answer( @RequestParam String answer, HttpSession session) {
+        return game.answer(session.getId(), answer);
     }
     
-    public void bind( HttpSession session ) {
-        
-    }
-    
-    public void answer( @RequestParam String answer, HttpSession session) {
-        
-    }
-    
-    public void doGet( HttpServletRequest req,
-                          HttpServletResponse resp )
-            throws ServletException, IOException {
-        
-        String action = req.getParameter( "action" );
-        String id = req.getSession().getId();
-        if ( "play".equals( action )) {
-            String name = req.getParameter( "name" );
-            AsyncContext async = req.startAsync();
-            game.play( id, name, async );
-        }
-        else if ( "answer".equals( action )) {
-            String answer = req.getParameter( "answer" );
-            game.answer( id, answer );
-
-        }
-        else if ( "bind".equals( action )) {
-            AsyncContext async = req.startAsync();
-            game.bind( id, async );            
-        }
-        
-    }
-
 }

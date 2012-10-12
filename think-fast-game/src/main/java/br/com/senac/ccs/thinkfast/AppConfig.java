@@ -4,26 +4,29 @@
  */
 package br.com.senac.ccs.thinkfast;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-
-
-/**
- *
- * @author yara
- */
 @Configuration
-@ComponentScan(basePackages = { "br.com.senac.ccs.thikfast"})
-@Profile("mocks")
+@ComponentScan(basePackages = "br.com.senac.ccs.thinkfast")
+//@Profile("mocks")
 
 public class AppConfig extends WebMvcConfigurationSupport {
     
     @Override
     public void addViewControllers( ViewControllerRegistry registry ) {
         registry.addViewController( "/" ).setViewName( "index" );
+    }
+    @Override
+    protected void addResourceHandlers( ResourceHandlerRegistry registry) {
+        registry.addResourceHandler( "/resources/**").addResourceLocations("resources/");
+        
     }
     @Bean
     public ViewResolver viewResolver() {
@@ -32,8 +35,7 @@ public class AppConfig extends WebMvcConfigurationSupport {
         resolver.setSuffix( ".jsp" );
         return resolver;
     }
-    @Override
-    protected void addViewResourceHandlers( ResourceHandlerRegistry: registry.addResourceHandler( "/resources/*") ) {
+    
     
     
     
