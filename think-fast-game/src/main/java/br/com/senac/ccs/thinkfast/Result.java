@@ -31,6 +31,11 @@ public class Result {
         this.message = message;
         this.participants = participants;
     }
+    
+    public Result( String message, List<Participant> participants ) {
+        this.message = message;
+        this.participants = participants;
+    }
 
     public Question getQuestion() {
         return question;

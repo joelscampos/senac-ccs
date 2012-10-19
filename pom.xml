@@ -34,6 +34,7 @@
         <module>amigo-secreto</module>
         <module>think-fast-game</module>
     <module>senac-chat</module>
+    <module>teste-web</module>
   </modules>
     
     <dependencies>

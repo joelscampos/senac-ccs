@@ -1,0 +1,10 @@
+----------------------------------------------------------------
+Thu Oct 18 23:01:14 BRT 2012:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-013a-76c0-bfc1-000000e7a978 
+on database directory memory:C:\Users\yara\workspace\senac-ccs\think-fast-game\thinkfastgamedb  with class loader WebAppClassLoader=5847979@593bab 
+Loaded from file:/C:/Users/yara/.m2/repository/org/apache/derby/derby/10.8.2.2/derby-10.8.2.2.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_03-b05
+user.dir=c:\Users\yara\workspace\senac-ccs\think-fast-game
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

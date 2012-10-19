@@ -1,12 +1,10 @@
 package br.com.senac.ccs.thinkfast;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 
@@ -18,11 +16,11 @@ public class ThinkFastController {
     private ThinkFastGame game;
 
     @RequestMapping(value="play", method = RequestMethod.GET )
-    public @ResponseBody Result play(@RequestParam String name, HttpSession session) {
+    public @ResponseBody Result play(/*@Valid*/ Participant participant, HttpSession session) {
         String id = session.getId();
         DeferredResult<Result> deferredResult = new DeferredResult<Result>();
         Screen screen = new WebScreen( deferredResult );
-        return game.play(id, name, screen);
+        return game.play(id, participant.getName(), screen);
         
     }
     @RequestMapping(value="bind", method = RequestMethod.GET )
@@ -32,9 +30,9 @@ public class ThinkFastController {
         game.bind(session.getId(), screen);
         return deferredResult;
     }
-    @RequestMapping(value="answer", method = RequestMethod.GET )
-    public @ResponseBody Result answer( @RequestParam String answer, HttpSession session) {
-        return game.answer(session.getId(), answer);
+    @RequestMapping(value="answer", method = RequestMethod.POST, consumes={"application/json"} )
+    public @ResponseBody Result answer( @RequestBody Answer answer, HttpSession session) {
+        return game.answer( session.getId(), answer );
     }
     
 }

@@ -1,6 +1,7 @@
 package br.com.senac.ccs.thinkfast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.validation.constraints.NotNull;
 
 public class Participant {
 
@@ -32,6 +33,11 @@ public class Participant {
         return name;
     }
 
+    //@NotNull /*necessario colocar a api lá no pom*/
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public int getScore() {
         return score;
     }
@@ -50,5 +56,9 @@ public class Participant {
         if ( screen != null ) {
             screen.show( result );
         }
+    }
+
+    public void reduceScore() {
+        this.score--;
     }
 }
