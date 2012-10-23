@@ -1,6 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+    "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
     <head>
@@ -14,64 +14,55 @@
         <h1>Chat</h1>
         <div id="participant">
             <h2>Insira seu nome e clique no botão Entrar para acessar:</h2>
-            <input type="text" name="participant" data-bind="value: participant" />
-            <input type="button" value="Entrar" data-bind="click: play" />
+            <input type="text" name="participant" data-bind="value: participantName" />
+            <input type="button" value="Entrar" data-bind="click: entrar" />
         </div>
         <br/>
-        <ul data-bind="foreach: participants">
-            <li style="list-style: none;">
-                <span data-bind="text: $data.name">Joe</span>
-                - <span data-bind="text: $data.score">0</span>
-            </li>
-        </ul>
-        <div id="survey" data-bind="with: question">
-            <span data-bind="text: description">Qual a capital da Rússia?</span>
-            <ul data-bind="foreach: answers">
+        <div id="chatMessagesDiv">
+            <ul data-bind="foreach: chatMessages">
                 <li style="list-style: none;">
-                    <input type="radio" name="answer" data-bind="click: $root.answer"/>
-                    <span data-bind="text: $data.description">Moscou</span>
+                    <span data-bind="text: $data">Msgs</span>
                 </li>
             </ul>
         </div>
-        <span id="message" data-bind="text: message"></span>
-        
+        <br/>
+        <div id="chatInputDiv">
+            <textarea data-bind="value: message"></textarea>
+            <br/>
+            <input type="button" data-bind="click: sendChatMessage" value="Enviar"/>
+        </div>
+        <br/>
         <script>
-            var ThinkFast = function() {
+            var Chat = function() {
                 var self = this;
-                self.participant = ko.observable();
-                self.question = ko.observable();
+                self.participantName = ko.observable();
+                self.chatMessages = ko.observableArray([]);
                 self.message = ko.observable();
-                self.participants = ko.observableArray([]);
 
-			
-                self.play = function() { 
-                    $.getJSON("/thinkfast/play", {name: self.participant() }, function(data){
-                        ko.mapping.fromJS(data, {}, self);
+                self.entrar = function(data) {
+                    $.get("/chat/entrar", {participantName: self.participantName()}, function(data){
                         self.bind();
-                        
                     });
                 }
+
                 self.bind = function(data) {
-                    $.getJSON("/thinkfast/bind", function(data){
-                        ko.mapping.fromJS(data, {}, self);
-                    }).complete(function(data) { /*complete equivale a um finally*/
+                    $.get("/chat/bind", {}, function(data){
+                        self.chatMessages.push(data);
+                    }).complete(function(data){
                         self.bind();
-                    });                    
+                    });
                 }
-                self.answer = function(answer) {
-                    $.ajax({ url: "${pageContext.servletContext.contextPath}/thinkfast/answer",
-                        type: 'POST',
-                        dataType: 'json',
-                        data: JSON.stringify(ko.mapping.toJS(answer)),
-                        contentType: "application/json; charset=utf-8",
-                        traditional: true,
-                        success: function(data) {
-                            ko.mapping.fromJS(data, {}, self);
-                        }})
-                    return true;
+
+                self.sendChatMessage = function(data) {
+                    $.get("/chat/sendChatMessage", {message: self.message()}, function(data){
+                        self.chatMessages.push(data);
+                    });
                 }
             }
-            ko.applyBindings(new ThinkFast());
+            
+            ko.applyBindings(new Chat());
+            
         </script>
     </body>
+    
 </html>
