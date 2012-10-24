@@ -70,7 +70,7 @@ public class AppConfig extends WebMvcConfigurationSupport {
     @Bean
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl( "jdbc:derby:memory:senac-chatdb;create=true" );
+        dataSource.setUrl( "jdbc:derby:memory:chatgamedb;create=true" );
         dataSource.setUsername( "survey" );
         dataSource.setPassword( "survey" );
         dataSource.setMaxActive( 10 );

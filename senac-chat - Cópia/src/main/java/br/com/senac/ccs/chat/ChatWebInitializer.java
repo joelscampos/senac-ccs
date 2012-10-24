@@ -2,7 +2,7 @@ package br.com.senac.ccs.chat;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import static javax.servlet.ServletRegistration.Dynamic;
+import javax.servlet.ServletRegistration.Dynamic;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;

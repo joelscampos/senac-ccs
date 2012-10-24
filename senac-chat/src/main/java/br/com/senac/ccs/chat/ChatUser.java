@@ -1,65 +1,74 @@
 package br.com.senac.ccs.chat;
 
-import static com.google.common.collect.Sets.newHashSet;
-import java.text.MessageFormat;
-import java.util.Set;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class ChatUser {
 
     private final ConcurrentHashMap<String, Participant> participants;
+    private List<Participant> Participants;
     private final Lock lock;
-    private final MessageRepository messageRepository;
     
-    
-    @Autowired
-    public ChatUser (MessageRepository repository) {
-        this.messageRepository = repository;
+    //@Autowired
+    public ChatUser() {
         this.participants = new ConcurrentHashMap<String, Participant>();
         this.lock = new ReentrantLock();
+        this.Participants = new ArrayList<Participant>();
     }
+       
     
-    
-    public String play( String id, String name ) {
+    public Result play( String id, String name, Screen screen ) {
         lock.lock();        
+        Result result = null;
         try {
-            Participant currentParticipant = new Participant (id, name);
+            Participant participant = new Participant (id, name, screen);
 
-            participants.put(id, currentParticipant);            
+            Participants.add(participant);
+            participants.put(id, participant);
+            result = new Result(String.format("Welcome %s!", participant.getName()), new ArrayList<Participant>(participants.values()));
         }
         finally {
             lock.unlock();
        }
-       return String.format("Bem vindo %s", name);
+       return result;
     }
 
 
-    public void bind(String id, Listener<String> listener) {
-        if (participants.contains(id)) {
-            participants.get(id).setChatMessageListener(listener);
-        }
+    public void bind( String id, Screen screen ) {
+        Participant participant = participants.get(id);
+        participant.setScreen(screen);
     }
-
-    public String sendChatMessage( String id, String message ) {
+    
+    
+    public Result sendChatMessage( String id, String message ) {
         lock.lock();
+        Result result = null;
         try {
-            Participant currentParticipant = participants.get(id);
-            Set<Participant> otherUsers = newHashSet(participants.values());
-            otherUsers.remove(currentParticipant);
-            String otherUsersMessage = MessageFormat.format("{0} disse: {1}", currentParticipant.getName(), message);
-            for (Participant participant : otherUsers) {
-                participant.sendChatMessage(otherUsersMessage);
+            final List<Participant> all = new ArrayList<Participant>( participants.values());
+            Participant participantCurrent = participants.remove(id);
+            participantCurrent.notify(new Result("Parabeeeens!! :)", all) );
+            for (Participant participant : participants.values()) {
+                    participant.notify(new Result(String.format ("O participante %s respondeu mais rapido, tente novamente", participantCurrent.getName()), all));
             }
-            messageRepository.save(new Message(currentParticipant, message));
+            participants.put(id, participantCurrent);
+            
+            //messageRepository.save(new Message(currentParticipant, message));
         } finally {
             lock.unlock();
         }
-        return MessageFormat.format("Voce disse: {0}", message);
+        return result;
                 
     }
 }

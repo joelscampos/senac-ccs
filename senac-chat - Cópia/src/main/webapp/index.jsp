@@ -40,27 +40,23 @@
                 self.message = ko.observable();
 
                 self.entrar = function(data) {
-                    $.getJSON("/chat/entrar", 
-                              {name: self.participantName() }, 
-                              function(data){ ko.mapping.fromJS(data, {}, self); self.bind(); }
-                             );
-                                 alert(data.toString());
+                    $.get("/chat/entrar", {participantName: self.participantName()}, function(data){
+                        self.bind();
+                    });
                 }
 
                 self.bind = function(data) {
-                    alert("antes do bind");
-                    $.getJSON("/chat/bind",
-                              function(data){  ko.mapping.fromJS(data, {}, self);}
-                             ).complete(function(data) { /*complete equivale a um finally*/
-                                                        self.bind();});
-                                                    alert(data.valueOf());
+                    $.get("/chat/bind", {}, function(data){
+                        self.chatMessages.push(data);
+                    }).complete(function(data){
+                        self.bind();
+                    });
                 }
 
                 self.sendChatMessage = function(data) {
-                    $.get("/chat/sendChatMessage", 
-                          {message: self.message()}, 
-                          function(data){ self.chatMessages.push(data);}
-                      );
+                    $.get("/chat/sendChatMessage", {message: self.message()}, function(data){
+                        self.chatMessages.push(data);
+                    });
                 }
             }
             
